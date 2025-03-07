@@ -26,9 +26,6 @@ In this project, I will analyze how **departure time** and **traffic conditions*
      **CO2 Emissions (kg) = Fuel Consumption (liters) × Emission Factor (kg CO2/liter)**.  
    - The emission factor for gasoline is approximately 2.31 kg CO2/liter.
 
-6. **Day of the Week**:  
-   - Information to distinguish whether the trip occurred on a weekday or weekend.
-
 ---
 
 ## Plan
