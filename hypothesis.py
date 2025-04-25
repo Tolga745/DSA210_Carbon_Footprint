@@ -4,48 +4,49 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
 
+# Load the commute data
 df = pd.read_csv('commute_data.csv')
 
-# Hypothesis Test 1: Does traffic condition affect CO2 emissions?
-print("Hypothesis Test: Effect of Traffic Condition on CO2 Emissions")
-traffic_groups = [df[df['traffic_condition'] == cond]['co2_emissions_kg'] 
-                 for cond in ['low', 'moderate', 'high']]
+# Map numeric traffic_condition values to strings
+traffic_map = {0: 'low', 1: 'moderate', 2: 'high'}
+df['traffic_condition'] = df['traffic_condition'].map(traffic_map)
 
-# Check normality assumption (if sample size permits)
-for i, cond in enumerate(['low', 'moderate', 'high']):
-    stat, p = stats.shapiro(traffic_groups[i])
-    print(f"Shapiro-Wilk Test for {cond} traffic: W={stat:.4f}, p={p:.4f}")
+print("\n===== HYPOTHESIS TEST 1: TRAFFIC CONDITION vs CO2 EMISSIONS =====")
+print("H0: Traffic conditions have no effect on CO2 emissions")
+print("H1: Different traffic conditions lead to different CO2 emission levels\n")
 
-# Perform ANOVA or Kruskal-Wallis test based on normality results
-f_stat, p_anova = stats.f_oneway(*traffic_groups)
-print(f"ANOVA test: F={f_stat:.4f}, p={p_anova:.4f}")
+# Group data by traffic condition
+low_traffic = df[df['traffic_condition'] == 'low']['co2_emissions_kg']
+moderate_traffic = df[df['traffic_condition'] == 'moderate']['co2_emissions_kg']
+high_traffic = df[df['traffic_condition'] == 'high']['co2_emissions_kg']
 
-stat, p_kw = stats.kruskal(*traffic_groups)
-print(f"Kruskal-Wallis test: H={stat:.4f}, p={p_kw:.4f}")
+traffic_groups = [low_traffic, moderate_traffic, high_traffic]
+traffic_labels = ['low', 'moderate', 'high']
 
-# Hypothesis Test 2: Does trip direction affect fuel efficiency?
-print("\nHypothesis Test: Effect of Trip Direction on Fuel Efficiency")
-home_to_campus = df[df['trip_direction'] == 'Home to Campus']['fuel_efficiency_l_per_100km']
-campus_to_home = df[df['trip_direction'] == 'Campus to Home']['fuel_efficiency_l_per_100km']
+# Check for normality in each group
+print("Checking normality assumptions using Shapiro-Wilk test:")
+normality_passed = True
+for i, traffic_type in enumerate(traffic_labels):
+    # Shapiro-Wilk test: p > 0.05 suggests normal distribution
+    stat, p_value = stats.shapiro(traffic_groups[i])
+    is_normal = "NORMAL" if p_value > 0.05 else "NOT NORMAL"
+    print(f"  {traffic_type.capitalize()} traffic: W={stat:.4f}, p={p_value:.4f} → {is_normal}")
+    if p_value <= 0.05:
+        normality_passed = False
 
-# Check normality
-stat_h2c, p_h2c = stats.shapiro(home_to_campus)
-stat_c2h, p_c2h = stats.shapiro(campus_to_home)
-print(f"Shapiro-Wilk Test for Home to Campus: W={stat_h2c:.4f}, p={p_h2c:.4f}")
-print(f"Shapiro-Wilk Test for Campus to Home: W={stat_c2h:.4f}, p={p_c2h:.4f}")
-
-# T-test or Mann-Whitney test
-t_stat, p_ttest = stats.ttest_ind(home_to_campus, campus_to_home)
-print(f"Independent t-test: t={t_stat:.4f}, p={p_ttest:.4f}")
-
-u_stat, p_mw = stats.mannwhitneyu(home_to_campus, campus_to_home)
-print(f"Mann-Whitney U test: U={u_stat:.4f}, p={p_mw:.4f}")
-
-# Hypothesis Test 3: Correlation between trip duration and CO2 emissions
-print("\nHypothesis Test: Correlation between Trip Duration and CO2 Emissions")
-corr, p_corr = stats.pearsonr(df['trip_duration'], df['co2_emissions_kg'])
-print(f"Pearson correlation: r={corr:.4f}, p={p_corr:.4f}")
-
-# Spearman rank correlation (more robust to outliers and non-normality)
-rho, p_spearman = stats.spearmanr(df['trip_duration'], df['co2_emissions_kg'])
-print(f"Spearman correlation: ρ={rho:.4f}, p={p_spearman:.4f}")
+# Choose appropriate test based on normality results
+print("\nSelecting appropriate statistical test:")
+if normality_passed:
+    # If all groups are normal, use ANOVA (parametric)
+    f_stat, p_anova = stats.f_oneway(*traffic_groups)
+    print(f"  Using ANOVA (parametric test for normal distributions)")
+    print(f"  Result: F={f_stat:.4f}, p={p_anova:.4f}")
+    significant = "SIGNIFICANT" if p_anova < 0.05 else "NOT SIGNIFICANT"
+    print(f"  Conclusion: {significant} difference at α=0.05")
+else:
+    # If any group is not normal, use Kruskal-Wallis (non-parametric)
+    stat, p_kw = stats.kruskal(*traffic_groups)
+    print(f"  Using Kruskal-Wallis (non-parametric alternative to ANOVA)")
+    print(f"  Result: H={stat:.4f}, p={p_kw:.4f}")
+    significant = "SIGNIFICANT" if p_kw < 0.05 else "NOT SIGNIFICANT"
+    print(f"  Conclusion: {significant} difference at α=0.05")
