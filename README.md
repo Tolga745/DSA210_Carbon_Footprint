@@ -100,6 +100,7 @@ From March to April, data was collected using methods below:
 - **CO2 Emissions (kg)**: Derived from fuel consumption data using standard emissions factors, quantifying the environmental impact of each trip
 
 
+
 ### **Data Processing**
  **Data Cleaning**:
 - Standardized units (e.g., km, liters, minutes).
@@ -111,3 +112,37 @@ From March to April, data was collected using methods below:
 - CO2 per km: co2_emissions_kg / distance_km.
 
 #### **Visualization** 
+1) This is the data summary where we can see that the high traffic trips have the highest carbon emmision present. Also we can see that even though the low traffic is the lowest value we also can see that there were only 5 low traffic trips and there are 16 moderate traffic trips. It is unclear if the reason low traffic is the lowest is that it is actually the most enviromentally friendly or that there isnt enough data. It is hard to make a certain decision  
+
+![data](https://github.com/user-attachments/assets/ab0971e4-4edb-48d9-b006-9b595122fab9)
+
+2) From this bar graph we can see the distribution of the trip duration. We can see that the trips were mostly between 40 to 55 minutes long
+
+![Figure_1](https://github.com/user-attachments/assets/0f2cfc9f-e53b-428e-9c25-dec4ce3a2333)
+
+3) The correlation matrix reveals key relationships between commute variables, with trip duration showing moderate correlation (0.41) with distance but weaker correlations with fuel metrics (0.25-0.29). Most notably, there's a perfect correlation (1.00) between fuel used and CO2 emissions, confirming their direct relationship. Fuel efficiency correlates strongly (0.85) with both emissions and fuel consumption, while distance surprisingly has minimal impact (-0.01) on efficiency. 
+
+![correlation_matrix](https://github.com/user-attachments/assets/7416b5e4-f47d-405a-bacb-e14e877472a9)
+
+4) The histogram clearly demonstrates how traffic conditions affect carbon emissions, with progressively higher average emissions across traffic levels (low: 3.67 kg, moderate: 3.97 kg, high: 4.15 kg). The visualization shows emissions from low traffic trips clustering at lower values, while high traffic trips consistently produce higher emissions. This pattern confirms that worsening traffic conditions lead to increased environmental impact, with approximately 13% higher emissions in high traffic compared to low traffic situations.
+
+ ![image](https://github.com/user-attachments/assets/460fc85a-ba8c-4093-8777-21718b75b6bc)
+
+#### **Hypothesis Testing**
+**Objective**: To evaluate whether traffic conditions (low, moderate, high) significantly influence the amount of CO₂ emissions produced during trips.
+**Method**: I used a simple python code to test the hypothesis
+
+**Hypotheses**:
+- H₀ (Null Hypothesis): Traffic conditions have no effect on CO₂ emissions.
+- H₁ (Alternative Hypothesis): Different traffic conditions lead to different CO₂ emission levels.
+
+**Normality Check**: The Shapiro-Wilk test confirmed that CO₂ emissions data for all traffic conditions followed a normal distribution (p-values > 0.05), validating the use of parametric testing.
+**Test Performed**: A one-way ANOVA was conducted to compare the means of CO₂ emissions across the three traffic levels.
+**Results**:
+- F-statistic: 1.2685
+- p-value: 0.2959
+
+**Conclusion**: The ANOVA result indicates no statistically significant difference in CO₂ emissions across traffic conditions at the α = 0.05 level. This suggests that, within the current dataset, traffic condition alone does not have a measurable impact on emissions.
+![image](https://github.com/user-attachments/assets/013d50ac-6254-4191-acf4-19e01b63c444)
+
+We fail to reject the null hypothesis, meaning the data does not provide strong evidence that traffic condition impacts CO₂ emissions.
