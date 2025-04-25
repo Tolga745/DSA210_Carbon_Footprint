@@ -14,71 +14,61 @@ df['traffic_condition'] = pd.to_numeric(df['traffic_condition'], errors='coerce'
 df['co2_emissions_kg'] = pd.to_numeric(df['co2_emissions_kg'], errors='coerce')
 
 # Create traffic condition labels for better readability
-traffic_labels = {0: 'Low', 1: 'Moderate', 2: 'High'}
+traffic_labels = {0: 'Low Traffic (0)', 1: 'Moderate Traffic (1)', 2: 'High Traffic (2)'}
 
-# Group data by traffic condition
-grouped_data = df.groupby('traffic_condition')['co2_emissions_kg']
+# Set up the figure
+plt.figure(figsize=(12, 7))
 
-# Create a figure with two subplots
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+# Create bins for the histogram
+bins = np.linspace(df['co2_emissions_kg'].min(), df['co2_emissions_kg'].max(), 10)
 
-# 1. Histogram of CO2 emissions separated by traffic condition
-for traffic_level, color in zip([0, 1, 2], ['green', 'orange', 'red']):
-    subset = df[df['traffic_condition'] == traffic_level]['co2_emissions_kg']
-    if not subset.empty:
-        ax1.hist(subset, alpha=0.6, bins=8, label=traffic_labels[traffic_level], color=color)
-
-ax1.set_title('CO2 Emissions Distribution by Traffic Condition', fontsize=14)
-ax1.set_xlabel('CO2 Emissions (kg)', fontsize=12)
-ax1.set_ylabel('Frequency (Number of Trips)', fontsize=12)
-ax1.legend(title='Traffic Condition')
-ax1.grid(True, alpha=0.3)
-
-# 2. Bar chart showing average CO2 emissions by traffic condition
-mean_emissions = grouped_data.mean().reindex([0, 1, 2])
-std_emissions = grouped_data.std().reindex([0, 1, 2])
-
-colors = ['green', 'orange', 'red']
-bars = ax2.bar(
-    [traffic_labels[i] for i in mean_emissions.index],
-    mean_emissions.values,
-    yerr=std_emissions.values,
-    capsize=10,
-    color=colors
+# Create a true histogram
+plt.hist([
+    df[df['traffic_condition'] == 0]['co2_emissions_kg'],
+    df[df['traffic_condition'] == 1]['co2_emissions_kg'],
+    df[df['traffic_condition'] == 2]['co2_emissions_kg']
+], 
+    bins=bins, 
+    label=[traffic_labels[0], traffic_labels[1], traffic_labels[2]],
+    color=['green', 'orange', 'red'],
+    alpha=0.7,
+    stacked=True  # This creates a stacked histogram
 )
 
-# Add the value labels on top of each bar
-for bar, value in zip(bars, mean_emissions.values):
-    ax2.text(
-        bar.get_x() + bar.get_width()/2,
-        bar.get_height() + 0.1,
-        f'{value:.2f} kg',
-        ha='center',
-        fontsize=10
-    )
+# Add a vertical line for the overall average
+plt.axvline(x=df['co2_emissions_kg'].mean(), color='blue', linestyle='--', linewidth=1.5, 
+           label=f'Overall Mean: {df["co2_emissions_kg"].mean():.2f} kg')
 
-ax2.set_title('Average CO2 Emissions by Traffic Condition', fontsize=14)
-ax2.set_xlabel('Traffic Condition', fontsize=12)
-ax2.set_ylabel('Average CO2 Emissions (kg)', fontsize=12)
-ax2.grid(True, alpha=0.3, axis='y')
+# Calculate average for each traffic condition
+for traffic, color in zip([0, 1, 2], ['green', 'orange', 'red']):
+    subset = df[df['traffic_condition'] == traffic]
+    if not subset.empty:
+        avg = subset['co2_emissions_kg'].mean()
+        plt.axvline(x=avg, color=color, linestyle=':', linewidth=1.5,
+                   label=f'{traffic_labels[traffic]} Mean: {avg:.2f} kg')
 
-# Some additional statistics to display in the plot
-counts = grouped_data.count().reindex([0, 1, 2])
+# Add labels and title
+plt.xlabel('CO2 Emissions (kg)', fontsize=12)
+plt.ylabel('Frequency (Number of Trips)', fontsize=12)
+plt.title('Histogram of CO2 Emissions by Traffic Condition', fontsize=14)
+plt.grid(True, alpha=0.3)
+plt.legend(fontsize=10)
+
+# Add summary statistics as text
+traffic_counts = df.groupby('traffic_condition')['co2_emissions_kg'].count()
+traffic_means = df.groupby('traffic_condition')['co2_emissions_kg'].mean()
+
 stats_text = (
     f"Data Summary:\n"
-    f"Low Traffic: {counts[0]} trips, avg: {mean_emissions[0]:.2f} kg CO2\n"
-    f"Moderate Traffic: {counts[1]} trips, avg: {mean_emissions[1]:.2f} kg CO2\n"
-    f"High Traffic: {counts[2]} trips, avg: {mean_emissions[2]:.2f} kg CO2"
+    f"Low Traffic (0): {traffic_counts.get(0, 0)} trips, avg: {traffic_means.get(0, 0):.2f} kg CO2\n"
+    f"Moderate Traffic (1): {traffic_counts.get(1, 0)} trips, avg: {traffic_means.get(1, 0):.2f} kg CO2\n"
+    f"High Traffic (2): {traffic_counts.get(2, 0)} trips, avg: {traffic_means.get(2, 0):.2f} kg CO2\n"
+    f"Overall: {len(df)} trips, avg: {df['co2_emissions_kg'].mean():.2f} kg CO2"
 )
-fig.text(0.5, 0.01, stats_text, ha='center', fontsize=10, bbox=dict(facecolor='white', alpha=0.8))
+plt.figtext(0.5, 0.01, stats_text, ha='center', fontsize=10, 
+            bbox=dict(facecolor='white', alpha=0.8))
 
-plt.tight_layout(rect=[0, 0.05, 1, 0.95])
-plt.suptitle('Analysis of CO2 Emissions vs. Traffic Conditions', fontsize=16)
-plt.subplots_adjust(top=0.9, bottom=0.15)
+plt.tight_layout(rect=[0, 0.08, 1, 0.95])
 
-# Display the plot
+# Show the plot
 plt.show()
-
-# Print additional statistics
-print("\nStatistical Summary by Traffic Condition:")
-print(grouped_data.agg(['count', 'mean', 'median', 'min', 'max', 'std']).round(3))
