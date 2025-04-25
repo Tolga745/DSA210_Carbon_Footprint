@@ -28,7 +28,7 @@ date,departure_time,trip_direction,trip_duration,distance_km,fuel_efficiency_l_p
 2025-04-24,20:34,Home to Campus,68,40.1,5.2,2.0852,2,Thursday,4.816812
 2025-04-24,20:34,Campus to Home,38,39.6,4.2,1.6632,0,Thursday,3.841992
 2025-04-25,20:37,Home to Campus,52,39.8,4.5,1.791,1,Thursday,4.13721
-2025-04-25,10:18,Home to Campus,60,39.2,4.5,1.764,high,Friday,4.07484
-2025-04-25,10:19,Campus to Home,45,40.0,3.7,1.48,moderate,Friday,3.4188
-2025-04-25,10:19,Home to Campus,35,39.2,3.1,1.2152,low,Friday,2.807112
-2025-04-25,10:20,Campus to Home,90,40.0,5.2,2.08,high,Friday,4.8048
+2025-04-25,10:18,Home to Campus,60,39.2,4.5,1.764,2,Friday,4.07484
+2025-04-25,10:19,Campus to Home,45,40.0,3.7,1.48,1,Friday,3.4188
+2025-04-25,10:19,Home to Campus,35,39.2,3.1,1.2152,0,Friday,2.807112
+2025-04-25,10:20,Campus to Home,90,40.0,5.2,2.08,2,Friday,4.8048

@@ -1,45 +1,41 @@
-import pandas as pd
 import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
 import seaborn as sns
 
-# Load data
-df = pd.read_csv('commute_data.csv')
+# Assume the data is loaded from a CSV file
+# Instead of hardcoding the entire dataset, we'll use this approach:
+df = pd.read_csv('commute_data.csv')  # Replace with your actual file path
 
-# Map traffic condition numbers to labels
-traffic_map = {0: 'low', 1: 'moderate', 2: 'high'}
-df['traffic_condition'] = df['traffic_condition'].map(traffic_map)
+traffic_mapping = {0: 'Low', 1: 'Moderate', 2: 'High'}
+df['traffic_category'] = df['traffic_condition'].map(traffic_mapping)
 
-# Set categorical order for consistent coloring
-df['traffic_condition'] = pd.Categorical(df['traffic_condition'],
-                                         categories=['low', 'moderate', 'high'],
-                                         ordered=True)
+# Create a figure with multiple subplots
+fig, axes = plt.subplots(figsize=(7, 5))
 
-# Plot
-sns.set(style='whitegrid')
-scatter = sns.lmplot(
-    x='trip_duration',
-    y='co2_emissions_kg',
-    hue='traffic_condition',
-    data=df,
-    palette={'low': 'green', 'moderate': 'orange', 'high': 'red'},
-    height=6,
-    aspect=1.5,
-    scatter_kws={'s': 70, 'alpha': 0.6}
-)
+# Color mapping for consistency
+color_mapping = {'Low': 'green', 'Moderate': 'orange', 'High': 'red'}
 
-# Titles and labels
-scatter.set(title='Traffic Impact on Carbon Emissions')
-scatter.set_axis_labels('Trip Duration (minutes)', 'CO2 Emissions (kg)')
+# 1. Trip Duration Distribution - Histogram
+# 2. Fuel Consumption Distribution - Histogram
+sns.histplot(data=df, x='fuel_used_l',  
+             bins=10, kde=True, palette=color_mapping,
+             ax=axes)
+axes.set_title('Distribution of Fuel Consumption')
+axes.set_xlabel('Fuel Used (liters)')
+axes.set_ylabel('Frequency')
 
-# Optional annotation
-plt.annotate(
-    'Higher traffic = More emissions',
-    xy=(df['trip_duration'].max() * 0.6, df['co2_emissions_kg'].max() * 0.7),
-    xytext=(df['trip_duration'].max() * 0.7, df['co2_emissions_kg'].max() * 0.85),
-    arrowprops=dict(facecolor='black', shrink=0.05),
-    fontsize=12
-)
 
-plt.tight_layout()
-plt.savefig('traffic_vs_emissions.png', dpi=300, bbox_inches='tight')
+
+
+print("\nSummary Statistics for Fuel Consumption (liters):")
+fuel_stats = df.groupby('traffic_category')['fuel_used_l'].describe().round(2)
+# Reorder to have Low, Moderate, High sequence
+fuel_stats = fuel_stats.reindex(['Low', 'Moderate', 'High'])
+print(fuel_stats)
+
+# Optional: Calculate correlations
+print("\nCorrelation between Trip Duration and Fuel Consumption:")
+print(df[['trip_duration', 'fuel_used_l', 'distance_km', 'fuel_efficiency_l_per_100km']].corr().round(3))
+
 plt.show()
