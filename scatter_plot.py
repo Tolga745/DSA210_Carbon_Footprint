@@ -5,24 +5,40 @@ import seaborn as sns
 # Load data
 df = pd.read_csv('commute_data.csv')
 
-# Create scatter plot with regression lines
-plt.figure(figsize=(10, 6))
-scatter = sns.lmplot(x='trip_duration', y='co2_emissions_kg', 
-                     hue='traffic_condition', data=df,
-                     palette={'low':'green', 'moderate':'orange', 'high':'red'},
-                     height=6, aspect=1.5, scatter_kws={'s':80, 'alpha':0.7})
+# Map traffic condition numbers to labels
+traffic_map = {0: 'low', 1: 'moderate', 2: 'high'}
+df['traffic_condition'] = df['traffic_condition'].map(traffic_map)
 
-# Customize plot appearance
-plt.title('Traffic Impact on Carbon Emissions', fontsize=16, pad=20)
-plt.xlabel('Trip Duration (minutes)', fontsize=12)
-plt.ylabel('CO2 Emissions (kg)', fontsize=12)
-plt.grid(True, linestyle='--', alpha=0.3)
+# Set categorical order for consistent coloring
+df['traffic_condition'] = pd.Categorical(df['traffic_condition'],
+                                         categories=['low', 'moderate', 'high'],
+                                         ordered=True)
 
-# Add annotation for traffic trend
-plt.annotate('Higher traffic = More emissions', 
-             xy=(70, 4.5), xytext=(80, 5.0),
-             arrowprops=dict(facecolor='black', shrink=0.05),
-             fontsize=12)
+# Plot
+sns.set(style='whitegrid')
+scatter = sns.lmplot(
+    x='trip_duration',
+    y='co2_emissions_kg',
+    hue='traffic_condition',
+    data=df,
+    palette={'low': 'green', 'moderate': 'orange', 'high': 'red'},
+    height=6,
+    aspect=1.5,
+    scatter_kws={'s': 70, 'alpha': 0.6}
+)
+
+# Titles and labels
+scatter.set(title='Traffic Impact on Carbon Emissions')
+scatter.set_axis_labels('Trip Duration (minutes)', 'CO2 Emissions (kg)')
+
+# Optional annotation
+plt.annotate(
+    'Higher traffic = More emissions',
+    xy=(df['trip_duration'].max() * 0.6, df['co2_emissions_kg'].max() * 0.7),
+    xytext=(df['trip_duration'].max() * 0.7, df['co2_emissions_kg'].max() * 0.85),
+    arrowprops=dict(facecolor='black', shrink=0.05),
+    fontsize=12
+)
 
 plt.tight_layout()
 plt.savefig('traffic_vs_emissions.png', dpi=300, bbox_inches='tight')
