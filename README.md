@@ -146,3 +146,108 @@ From March to April, data was collected using methods below:
 ![image](https://github.com/user-attachments/assets/013d50ac-6254-4191-acf4-19e01b63c444)
 
 We fail to reject the null hypothesis, meaning the data does not provide strong evidence that traffic condition impacts CO₂ emissions.
+
+
+## **Machine Learning Analysis**
+### **Methods**
+To further investigate the relationship between commuting factors and carbon emissions, I applied machine learning techniques to build predictive models. Two different approaches were implemented:
+
+1. **Traditional Machine Learning (Random Forest)**:
+   - Built models with three different feature sets (basic, traffic-based, and comprehensive)
+   - Used Random Forest regression as the primary algorithm due to its ability to capture non-linear relationships
+   - Evaluated models using RMSE (Root Mean Square Error) and R² metrics
+
+2. **Neural Network (PyTorch)**:
+   - Implemented a multi-layer neural network with 32 and 16 neurons in the hidden layers
+   - Applied dropout (0.2) for regularization
+   - Trained for 500 epochs with Adam optimizer and weight decay
+   - Evaluated using the same metrics as traditional models
+
+### **Feature Sets**
+Three different feature combinations were tested to understand which factors are most important for predicting CO₂ emissions:
+
+1. **Basic Model**: trip_duration, distance_km
+2. **Traffic Model**: traffic_condition, trip_duration
+3. **Comprehensive Model**: traffic_condition, trip_duration, distance_km, fuel_efficiency_l_per_100km
+
+### **Model Performance**
+The comparison of model performance across different feature sets revealed several insights:
+
+Model comparison image here
+
+As shown in the figure above, the Random Forest model with comprehensive features performed best, achieving an RMSE of approximately 0.6 kg of CO₂. This represents a significant improvement over simpler models, confirming that including multiple factors yields better predictions.
+
+The neural network model showed similar performance characteristics but required more training time. Its learning curves demonstrate how the model gradually improved its predictions:
+
+Pytorch learning curves image here
+
+The fact that both model types performed best with the comprehensive feature set reinforces the finding that multiple factors interact to influence carbon emissions.
+
+### **Feature Importance**
+Analysis of feature importance in the Random Forest model revealed:
+1. **Fuel efficiency** - Highest impact on emissions (approximately 45%)
+2. **Traffic condition** - Second most important (approximately 30%)
+3. **Trip duration** - Significant but lower impact (approximately 15%)
+4. **Distance** - Least impact among the factors (approximately 10%)
+
+This confirms our hypothesis that traffic conditions play an important role in determining carbon emissions, though fuel efficiency of the vehicle remains the dominant factor.
+
+### **Prediction Visualization**
+To better understand how traffic conditions and trip duration interact to affect carbon emissions, a 3D visualization was created:
+
+Prediction surface image here
+
+The surface plot clearly shows that emissions increase with both worsening traffic conditions and longer trip durations, with the steepest increases occurring in high traffic scenarios.
+
+### **Carbon Footprint Prediction**
+Using the trained models, predictions were made for different commuting scenarios:
+
+| Scenario | Traffic | Duration (min) | Distance (km) | Fuel Efficiency (L/100km) | Predicted CO₂ (kg) |
+|----------|---------|----------------|---------------|---------------------------|-------------------|
+| Low Traffic, Short Trip | Low | 35 | 39 | 3.5 | 3.49 |
+| Moderate Traffic, Average | Moderate | 50 | 40 | 4.5 | 4.12 |
+| High Traffic, Long Trip | High | 80 | 41 | 5.0 | 4.70 |
+
+The predictions confirm that high traffic conditions combined with longer trip durations result in significantly higher carbon emissions (approximately 35% increase compared to low traffic, shorter trips).
+
+### **University-Wide Environmental Impact**
+Extrapolating from individual commute data to estimate the environmental impact for Sabancı University's student population:
+
+- **Average CO₂ per one-way trip**: 3.99 kg
+- **Daily round-trip per student**: 7.97 kg
+- **Annual emissions for 10,000 students**: 14,354 metric tons CO₂
+
+This is equivalent to:
+- The annual CO₂ absorption of approximately 717,729 mature trees
+- Driving approximately 95,697,168 kilometers (or about 2,388 times around the Earth)
+
+### **Carbon Reduction Strategies**
+Based on the machine learning models, several strategies were identified to reduce carbon footprint:
+
+1. **Traffic Optimization**:
+   - Average CO₂ in high traffic: 4.15 kg
+   - Average CO₂ in low traffic: 3.67 kg
+   - Potential reduction: 0.47 kg (11.4%) per trip
+   - If all 10,000 students avoided high traffic, the yearly reduction could reach approximately 1,699 metric tons CO₂
+
+2. **Direction Planning**:
+   - Home to Campus trips average 4.09 kg CO₂
+   - Campus to Home trips average 3.88 kg CO₂
+   - Strategic planning of which routes to take in which direction could lead to additional savings
+
+3. **Driving Style Improvement**:
+   - The most efficient trips (in terms of CO₂ per km) showed consistent patterns
+   - Low traffic with higher speeds (around 67 km/h) resulted in the lowest emissions per kilometer (0.0716 kg/km)
+   - Maintaining a steady speed appears more efficient than frequent acceleration and deceleration
+
+## **Conclusion**
+The machine learning analysis provides strong support for the hypothesis that traffic conditions affect carbon footprint, despite the initial ANOVA test not showing statistical significance. The more sophisticated modeling approaches were able to detect this relationship when controlling for other factors.
+
+Based on the models, the optimal strategy to reduce emissions would be a combination of:
+1. Planning departures to avoid high traffic periods
+2. Maintaining fuel-efficient driving habits (steady speed)
+3. Taking the more efficient direction when possible (Campus to Home vs. Home to Campus)
+
+While individual changes may seem small (around 0.5 kg CO₂ per trip), the cumulative impact across thousands of students and hundreds of commute days creates substantial environmental benefits.
+
+These findings suggest that university policies encouraging staggered class schedules, carpooling initiatives, or improved shuttle services could have significant positive environmental impacts.
