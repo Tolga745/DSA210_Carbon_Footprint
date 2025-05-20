@@ -173,13 +173,13 @@ Three different feature combinations were tested to understand which factors are
 ### **Model Performance**
 The comparison of model performance across different feature sets revealed several insights:
 
-Model comparison image here
+https://github.com/Tolga745/DSA210_Carbon_Footprint/blob/main/images/model_comparison.png
 
 As shown in the figure above, the Random Forest model with comprehensive features performed best, achieving an RMSE of approximately 0.6 kg of CO₂. This represents a significant improvement over simpler models, confirming that including multiple factors yields better predictions.
 
 The neural network model showed similar performance characteristics but required more training time. Its learning curves demonstrate how the model gradually improved its predictions:
 
-Pytorch learning curves image here
+https://github.com/Tolga745/DSA210_Carbon_Footprint/blob/main/images/pytorch_learning_curves.png
 
 The fact that both model types performed best with the comprehensive feature set reinforces the finding that multiple factors interact to influence carbon emissions.
 
@@ -195,7 +195,7 @@ This confirms our hypothesis that traffic conditions play an important role in d
 ### **Prediction Visualization**
 To better understand how traffic conditions and trip duration interact to affect carbon emissions, a 3D visualization was created:
 
-Prediction surface image here
+https://github.com/Tolga745/DSA210_Carbon_Footprint/blob/main/images/prediction_surface.png
 
 The surface plot clearly shows that emissions increase with both worsening traffic conditions and longer trip durations, with the steepest increases occurring in high traffic scenarios.
 
